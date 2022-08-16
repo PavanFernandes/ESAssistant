@@ -1,11 +1,9 @@
 package org.example;
 
-import java.util.List;
+public class Report {
 
-public class Report{
-
-    String name;
-    String id;
+    private String name;
+    private String id;
 
 
     public Report(String name, String id) {

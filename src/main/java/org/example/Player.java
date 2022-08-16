@@ -1,57 +1,32 @@
 package org.example;
+
 import net.dv8tion.jda.api.entities.*;
 import java.util.List;
+
 public class Player {
-    User member;
-    String name;
-    String raidLvl;
-    String cr;
-    String rank;
-    //String reportName;
-    String HeroPower;
-    String Armor;
-    String memberId;
+    private User member;
+    private String name;
+    private String raidLvl;
+    private String cr;
+    private String rank;
+    private String HeroPower;
+    private String Armor;
+    private String memberId;
+    private String gmt;
+
     public Player(User member, String nickname, List<Role> roles, String cr) {
         this.member = member;
         setMemberId(member.getId());
         String s;
-        if( nickname != null){
-             s = nickname;
-        } else{
+        if (nickname != null) {
+            s = nickname;
+        } else {
             s = member.getName();
         }
-        String[] a = s.split(" ");
-        StringBuilder sb = new StringBuilder(a[0]);
-        if(sb.length() < 12){
-             for(int i = sb.length(); i<12; i++){
-                 sb.append(" ");
-             }
-        }
-        else if (s.length() > 12){
-             sb.delete(11, sb.length());
-        }
-        this.name = sb.toString();
-        this.raidLvl = "NA";
-        for (Role role : roles) {
-            if (role.getName().contains("raid")) {
-                this.raidLvl = role.getName().replace("raid " , "");
-                break;
-            }
-        }
-
+        this.name = getNickname(s);
+        this.raidLvl = getRaidLvlByRoles(roles);
         this.cr = cr;
-        this.rank = " null  ";
-        for (Role role : roles) {
-             String c= role.getName();
-            if (c.equalsIgnoreCase("soldier") || c.equalsIgnoreCase("officer") || c.equalsIgnoreCase("shogun")) {
-                if(c.equalsIgnoreCase("shogun")){
-                   this.rank = role.getName() + " ";
-                } else {
-                    this.rank = role.getName();
-                }
-            }
-        }
-        //this.reportName = report;
+        this.rank = getRankByRoles(roles);
     }
 
     public Player(String memberId, String name, String raidLvl, String cr, String rank) {
@@ -60,49 +35,59 @@ public class Player {
         this.raidLvl = raidLvl;
         this.cr = cr;
         this.rank = rank;
-        //this.reportName = report;
     }
 
     public void setPlayer(User member, String nickname, List<Role> roles, String cr) {
         this.member = member;
         String s;
-        if( nickname != null){
+        if (nickname != null) {
             s = nickname;
-        } else{
+        } else {
             s = member.getName();
         }
+        this.name = getNickname(s);
+        this.raidLvl = getRaidLvlByRoles(roles);
+        this.cr = cr;
+        this.rank = getRankByRoles(roles);
+    }
+
+
+    private String getNickname(String s) {
         String[] a = s.split(" ");
         StringBuilder sb = new StringBuilder(a[0]);
-        if(sb.length() < 12){
-            for(int i = sb.length(); i<12; i++){
+        if (sb.length() < 12) {
+            for (int i = sb.length(); i < 12; i++) {
                 sb.append(" ");
             }
-        }
-        else if (s.length() > 12){
+        } else if (s.length() > 12) {
             sb.delete(11, sb.length());
         }
-        this.name = sb.toString();
-        this.raidLvl = " NA";
+        return sb.toString();
+    }
+
+    private String getRaidLvlByRoles(List<Role> roles) {
         for (Role role : roles) {
             if (role.getName().contains("raid")) {
-                this.raidLvl = role.getName().replace("raid " , "");
-                break;
+                return role.getName().replace("raid ", "");
             }
         }
+        return " NA";
+    }
 
-        this.cr = cr;
-        this.rank = " null  ";
+    private String getRankByRoles(List<Role> roles) {
         for (Role role : roles) {
-            String c= role.getName();
+            String c = role.getName();
             if (c.equalsIgnoreCase("soldier") || c.equalsIgnoreCase("officer") || c.equalsIgnoreCase("shogun")) {
-                if(c.equalsIgnoreCase("shogun")){
-                    this.rank = role.getName() + " ";
+                if (c.equalsIgnoreCase("shogun")) {
+                    return role.getName() + " ";
                 } else {
-                    this.rank = role.getName();
+                    return role.getName();
                 }
             }
         }
+        return " null  ";
     }
+
     public String getName() {
         return name;
     }
@@ -132,9 +117,6 @@ public class Player {
         this.raidLvl = raidLvl;
     }
 
-    public void setMember(User member) {
-        this.member = member;
-    }
     public String getHeroPower() {
         return HeroPower;
     }
@@ -161,13 +143,20 @@ public class Player {
         return raidLvl;
     }
 
-    public String getMemberId(){
+    public String getMemberId() {
         return this.memberId;
     }
 
-    public void setMemberId(String id){
-         this.memberId = id;
+    public void setMemberId(String id) {
+        this.memberId = id;
     }
 
+    public String getGmt() {
+        return gmt;
+    }
 
+    public boolean setGmt(String gmt) {
+        this.gmt = gmt;
+        return true;
+    }
 }

@@ -83,31 +83,7 @@ public class Main extends ListenerAdapter {
     static List<Player> ES = new ArrayList<>();
 
 
-    @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        String key = event.getName();
 
-        if (key.equals("createreport")) {
-            createReport(event);
-        } else if (key.equals("addplayer")) {
-            addPlayer(event);
-        } else if (key.equals("removeplayer")) {
-            removePlayer(event);
-        } else if (key.equals("notice")) {
-            notice(event);
-
-        } else if (key.equals("reportlist")) {
-            reportList(event);
-        } else if (key.equals("clanstatus")) {
-            clanStatus(event);
-        } else if (key.equals("heropower")) {
-            heroPower(event);
-        } else if (key.equals("armor")) {
-            armor(event);
-        } else if (key.equals("card")) {
-            card(event);
-        }
-    }
 
 
     @Override
@@ -123,6 +99,7 @@ public class Main extends ListenerAdapter {
         OptionData card = new OptionData(OptionType.USER, "card", "enter member", true);
         OptionData raid = new OptionData(OptionType.STRING, "raid", "enter raid lvl", true);
         OptionData rank = new OptionData(OptionType.STRING, "rank", "enter rank", true);
+        OptionData gmt = new OptionData(OptionType.STRING, "timezone", "enter ur time zone", true);
 
         event.getGuild().updateCommands().addCommands(Commands.slash("createreport", "create message ").addOptions(create))
                 .addCommands(Commands.slash("addplayer", "add player").addOptions(user, cr))
@@ -131,9 +108,11 @@ public class Main extends ListenerAdapter {
                 .addCommands(Commands.slash("clanstatus", "clan detail"))
                 .addCommands(Commands.slash("card", "player card").addOptions(card))
                 .addCommands(Commands.slash("heropower", "set your hero power").addOptions(hp))
-                .addCommands(Commands.slash("armor", "set your armor").addOptions(armor))
+                .addCommands(Commands.slash("armor", "set your armor points").addOptions(armor))
                 .addCommands(Commands.slash("addnondiscordplayer", " add non discord player").addOptions(playerName, raid, cr, rank))
+                .addCommands(Commands.slash("gmt", "set your gmt").addOptions(gmt))
                 .addCommands(Commands.slash("notice", "shows details").addOptions(option1)).queue();
+
     }
 
     @Override
@@ -146,9 +125,46 @@ public class Main extends ListenerAdapter {
         event.getJDA().updateCommands().addCommands(Commands.slash("create_report", "create message ").addOptions(create))
                 .addCommands(Commands.slash("addplayer", "add player").addOptions(user, cr))
                 .addCommands(Commands.slash("report_list", "shows all reports created so far"))
-                .addCommands(Commands.slash("notice", "shows details").addOptions(option1)).queue();
+                .addCommands(Commands.slash("notice", "enter message to be sent back ").addOptions(option1)).queue();
     }
 
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        String key = event.getName();
+
+        if (key.equals("createreport")) {
+            createReport(event);
+        } else if (key.equals("addplayer")) {
+            addPlayer(event);
+        }
+        else if(key.equals("addnondiscordplayer")){
+            addNonDiscordPlayer(event);
+        }
+        else if (key.equals("removeplayer")) {
+            removePlayer(event);
+        }
+        else if (key.equals("notice")) {
+            notice(event);
+        }
+        else if (key.equals("reportlist")) {
+            reportList(event);
+        }
+        else if (key.equals("clanstatus")) {
+            clanStatus(event);
+        }
+        else if (key.equals("heropower")) {
+            heroPower(event);
+        }
+        else if (key.equals("armor")) {
+            armor(event);
+        }
+        else if (key.equals("gmt")) {
+           setGmt(event);
+        }
+        else if (key.equals("card")) {
+            card(event);
+        }
+    }
     public void createReport(SlashCommandInteractionEvent event) {
         OptionMapping opt1 = event.getOption("name");
         String name = opt1.getAsString();
@@ -186,19 +202,7 @@ public class Main extends ListenerAdapter {
 
         OptionMapping opt2 = event.getOption("member");
         User user = opt2.getAsUser();
-        boolean access = false;
-        if (event.getUser() == user) {
-            access = true;
-        } else {
-            for (Player i : ES) {
-                if (i.getMemberId().equals(event.getMember().getId())) {
-                    if (i.getRank().trim().equalsIgnoreCase("shogun")) {
-                        access = true;
-                    }
-                }
-            }
-        }
-        System.out.println(access);
+        boolean access = checkPermission(event, user);
         if (access) {
             OptionMapping opt3 = event.getOption("corruption_resistance");
             String cr = opt3.getAsString();
@@ -237,7 +241,7 @@ public class Main extends ListenerAdapter {
                     String s = "";
                     for (Player p : ES) {
                         if (p.getRaidLvl().equals(reportName)) {
-                            s += "[ ` " + p.getName() + "`" + "       " + "` " + p.getRaidLvl() + " `" + "      " + "` " + p.rank + "`" +
+                            s += "[ ` " + p.getName() + "`" + "       " + "` " + p.getRaidLvl() + " `" + "      " + "` " + p.getRank() + "`" +
                                     "       " + "`" + p.getCr() + "`" + "<:emoji_cr:938080002648461323>" + " ]" + "\n";
                         }
                     }
@@ -255,15 +259,7 @@ public class Main extends ListenerAdapter {
     }
 
     public void removePlayer(SlashCommandInteractionEvent event) {
-        boolean access = false;
-        for (Player i : ES) {
-            if (i.getMemberId().equals(event.getMember().getId())) {
-                if (i.getRank().trim().equalsIgnoreCase("shogun")) {
-                    access = true;
-                }
-            }
-        }
-        System.out.println(access);
+        boolean access = checkPermission(event, null);
         if (access) {
             OptionMapping opt2 = event.getOption("name");
             String name = opt2.getAsString();
@@ -275,7 +271,7 @@ public class Main extends ListenerAdapter {
                     String s = "";
                     for (Player p : ES) {
                         if (p.getRaidLvl().equals(reportName)) {
-                            s += "[ ` " + p.getName() + "`" + "       " + "` " + p.getRaidLvl() + " `" + "      " + "` " + p.rank + "`" +
+                            s += "[ ` " + p.getName() + "`" + "       " + "` " + p.getRaidLvl() + " `" + "      " + "` " + p.getRank() + "`" +
                                     "       " + "`" + p.getCr() + "`" + "<:emoji_cr:938080002648461323>" + " ]" + "\n";
                         }
                     }
@@ -290,6 +286,15 @@ public class Main extends ListenerAdapter {
                 }
             }
         }
+    }
+
+     public void addNonDiscordPlayer(SlashCommandInteractionEvent event){
+         OptionMapping opt1 = event.getOption("name");
+         OptionMapping opt2 = event.getOption("raid");
+         OptionMapping opt3 = event.getOption("corruption_resistance");
+         OptionMapping opt4 = event.getOption("rank");
+         Player ndPlayer = new Player("ND",opt1.getAsString(), opt2.getAsString(), opt3.getAsString(), opt4.getAsString());
+         ES.add(ndPlayer);
     }
 
     public void notice(SlashCommandInteractionEvent event) {
@@ -337,7 +342,7 @@ public class Main extends ListenerAdapter {
         for (Player p : ES) {
             if (p.getMemberId().equals(event.getUser().getId())) {
                 if(p.setHeroPower(hp)){
-                 event.reply(p.getName().trim()+ " your HP = " + hp + " is set succesfully " ).setEphemeral(true).queue();
+                 event.reply(p.getName().trim()+ " your HP = " + hp + " is set successfully " ).setEphemeral(true).queue();
                 }
             }
         }
@@ -350,6 +355,18 @@ public class Main extends ListenerAdapter {
             if(p.getMemberId().equals(event.getUser().getId())) {
                 if(p.setArmor(armor)){
                     event.reply(p.getName().trim()+ " your armor = " + armor + " is set successfully ").setEphemeral(true).queue();
+                }
+            }
+        }
+    }
+
+    public void setGmt(SlashCommandInteractionEvent event){
+        OptionMapping opt1 = event.getOption("timezone");
+        String gmt = opt1.getAsString();
+        for (Player p : ES) {
+            if(p.getMemberId().equals(event.getUser().getId())) {
+                if(p.setGmt(gmt)){
+                    event.reply(p.getName().trim()+ " Time zone  = " + gmt  + " is set successfully ").setEphemeral(true).queue();
                 }
             }
         }
@@ -368,7 +385,9 @@ public class Main extends ListenerAdapter {
                         "Name " + p.getName() + "\n" +
                                 "Hero Power " + p.getHeroPower() + "\n" +
                                 "Raid Lvl " + p.getRaidLvl() + "\n" +
-                                "Armor " + p.getArmor() + "\n"
+                                "Armor " + p.getArmor() + "\n" +
+                                "Corruption Resistance " + p.getCr() + "<:emoji_cr:938080002648461323>" + "\n" +
+                                "GMT " + p.getGmt() + "\n"
                 );
                 event.getChannel().sendMessageEmbeds(builder.build()).queue();
                 break;
@@ -386,6 +405,19 @@ public class Main extends ListenerAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public boolean checkPermission(SlashCommandInteractionEvent event, User user){
+        if (event.getUser() == user) {
+            return true;
+        } else {
+            for (Player i : ES) {
+                if (i.getMemberId().equals(event.getMember().getId())) {
+                    if (i.getRank().trim().equalsIgnoreCase("shogun")) {
+                        return true;
+                    }
+                }
+            }
+        } return false;
     }
 
 }
