@@ -26,3 +26,9 @@ test {
 task stage(dependsOn: ['build','shadowJar', 'clean', 'test'])
 build.mustRunAfter clean
 build.mustRunAfter test
+
+jar {
+    manifest{
+        attributes 'Class-Path': '/libs/ESAssistant-1.0-SNAPSHOT-all.jar', 'Main-Class': 'org.example.Main'
+    }
+}
