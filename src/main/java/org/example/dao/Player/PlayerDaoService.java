@@ -50,7 +50,7 @@ public class PlayerDaoService implements PlayerDao{
         TypedQuery<Player> query = this.entityManager.createQuery("FROM Player WHERE memberId=:id", Player.class);
         query.setParameter("id", id);
         try{
-            return  query.getSingleResult();
+            return  query.getResultList().get(0);
         }catch (NoResultException e){
             return null;
         }

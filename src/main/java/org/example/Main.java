@@ -13,6 +13,7 @@ import org.example.dao.Player.PlayerDao;
 import org.example.dao.clan.ClanDao;
 import org.example.entities.*;
 import org.example.starters.Commands;
+import org.example.starters.EnvKeys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,8 +21,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.security.auth.login.LoginException;
 import java.util.*;
 import java.util.List;
-
-import static org.example.starters.StarterCode.loadData;
 
 @SpringBootApplication
 public class Main extends ListenerAdapter {
@@ -39,7 +38,8 @@ public class Main extends ListenerAdapter {
 
     public static void main(String[] args) throws LoginException {
         SpringApplication.run(Main.class, args);
-        JDABuilder builder = JDABuilder.createDefault("OTY1OTUwMDg5ODEyMTI3NzY1.GbQI2s.ySIR_x7_wc00wdhop7mQ_waX8VKQ6Qn4eDZGiI", GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT);
+        String token = EnvKeys.botToken;
+        JDABuilder builder = JDABuilder.createDefault(token, GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT);
         builder.disableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.STICKER, CacheFlag.SCHEDULED_EVENTS);
         builder.setBulkDeleteSplittingEnabled(false);
         builder.setCompression(Compression.NONE);
@@ -47,8 +47,6 @@ public class Main extends ListenerAdapter {
                 new CardMaker(), new NoticeListener());
         builder.setActivity(Activity.watching("Server"));
         builder.build();
-
-       // loadData();
 
     }
 
