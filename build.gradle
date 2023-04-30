@@ -1,20 +1,28 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'org.springframework.boot' version '3.0.5'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group 'org.example'
+group 'org.ES.example'
 version '1.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    implementation("ch.qos.logback:logback-classic:1.2.8")
-    implementation("net.dv8tion:JDA:5.0.0-alpha.17"){
+    implementation'ch.qos.logback:logback-classic:1.4.6'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    // implementation("net.dv8tion:JDA:5.0.0-alpha.17")
+    implementation("net.dv8tion:JDA:5.0.0-beta.6"){
         exclude module: 'opus-java'
     }
 }
@@ -29,6 +37,6 @@ build.mustRunAfter test
 
 jar {
     manifest{
-        attributes 'Class-Path': '/libs/ESAssistant-1.0-SNAPSHOT-all.jar', 'Main-Class': 'org.example.Main'
+        attributes 'Class-Path': '/libs/ESAssistant-1.0-SNAPSHOT-all.jar', 'Main-Class': 'org.ES.example.Main'
     }
 }

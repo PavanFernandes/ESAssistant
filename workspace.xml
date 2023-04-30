@@ -52,7 +52,7 @@
       <module name="ESAssistant.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.*" />
+          <option name="PATTERN" value="org.example.entities.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -61,11 +61,11 @@
       </method>
     </configuration>
     <configuration name="MakeImage" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.example.MakeImage" />
+      <option name="MAIN_CLASS_NAME" value="org.example.entities.MakeImage" />
       <module name="ESAssistant.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.example.*" />
+          <option name="PATTERN" value="org.example.entities.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>

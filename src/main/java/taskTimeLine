@@ -1,0 +1,32 @@
+------------------------------------------------------------------------------------------------------------------------
+
+    ESAssistant - version 1.0
+
+-implemented using FileSystem.
+
+------------------------------------------------------------------------------------------------------------------------
+
+    ESAssistant - version 1.1
+
+-implementing Database.
+-hybrid, uses both file system and databases.
+-restructured the code and placed them in specific packages.
+
+------------------------------------------------------------------------------------------------------------------------
+
+    ESAssistant - version 1.2
+
+-removing the fileSystem, unnecessary codes, clean the code.
+-complete the method implementation and crud related codes and test them.
+-add new things/features.
+
+
+ daily requirement tasks completed
+- show clans;
+- clan status - must show clan info;
+
+
+-added player card feature.
+
+------------------------------------------------------------------------------------------------------------------------
+
